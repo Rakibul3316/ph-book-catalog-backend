@@ -19,6 +19,20 @@ const createBook = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getSingleBook = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  const result = await BookServices.getSingleBookFromDB(id);
+
+  sendResponse<IBook>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Find specific book",
+    data: result,
+  });
+});
+
 export const BookControllers = {
   createBook,
+  getSingleBook
 };

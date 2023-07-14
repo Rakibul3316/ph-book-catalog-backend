@@ -8,7 +8,7 @@ type IApiReponse<T> = {
     limit: number;
     page: number;
     total: number;
-  } | null;
+  };
   data?: T | null;
 };
 
@@ -17,7 +17,7 @@ const sendResponse = <T>(res: Response, data: IApiReponse<T>) => {
     statusCode: data.statusCode,
     success: data.success,
     message: data.message || null,
-    meta: data.meta || null,
+    meta: data.meta,
     data: data.data || null,
   };
 
