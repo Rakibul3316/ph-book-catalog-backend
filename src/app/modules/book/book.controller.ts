@@ -1,9 +1,11 @@
 import httpStatus from "http-status";
+import { Request, Response } from "express";
+import { IBook } from "./book.interface";
+import { BookServices } from "./book.service";
+import { bookFilterableFields } from "./book.contant";
 import catchAsync from "../../../shared/catchAsync";
 import sendResponse from "../../../shared/sendResponse";
-import { IBook } from "./book.interface";
-import { Request, Response } from "express";
-import { BookServices } from "./book.service";
+import pick from "../../../shared/pick";
 
 const createBook = catchAsync(async (req: Request, res: Response) => {
   const { ...bookData } = req.body;
@@ -19,6 +21,20 @@ const createBook = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllBooks = catchAsync(async (req: Request, res: Response) => {
+  const filters = pick(req.query, bookFilterableFields);
+
+  const result = await BookServices.getAllBooksFromDB(filters);
+
+  sendResponse<IBook[]>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Retrived books data",
+    meta: result.meta,
+    data: result.data,
+  });
+});
+
 const getSingleBook = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
 
@@ -28,6 +44,20 @@ const getSingleBook = catchAsync(async (req: Request, res: Response) => {
     statusCode: httpStatus.OK,
     success: true,
     message: "Find specific book",
+    data: result,
+  });
+});
+
+const updateBook = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const updateData = req.body;
+
+  const result = await BookServices.updateBookToDB(id, updateData);
+
+  sendResponse<IBook>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Book updated successfully",
     data: result,
   });
 });
@@ -49,5 +79,7 @@ const deleteBook = catchAsync(async (req: Request, res: Response) => {
 export const BookControllers = {
   createBook,
   getSingleBook,
+  getAllBooks,
+  updateBook,
   deleteBook,
 };

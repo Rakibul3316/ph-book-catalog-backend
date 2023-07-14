@@ -9,10 +9,17 @@ export type IBook = {
     | "novel"
     | "mystrey"
     | "historical"
-    | "science fiction";
+    | "science-fiction";
   publication_date: Date;
   reviews?: string[];
   author_id: Types.ObjectId;
+};
+
+export type IBookFilters = {
+  searchTerm?: string;
+  title?: string;
+  genre?: string;
+  publication_date?: string;
 };
 
 export type BookModel = Model<IBook, Record<string, unknown>>;

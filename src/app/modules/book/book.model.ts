@@ -20,7 +20,7 @@ const bookSchema = new Schema<IBook, BookModel>(
         "novel",
         "mystrey",
         "historical",
-        "science fiction",
+        "science-fiction",
       ],
     },
     reviews: {
