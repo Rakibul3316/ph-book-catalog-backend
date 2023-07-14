@@ -11,7 +11,13 @@ const getSingleBookFromDB = async (id: string): Promise<IBook | null> => {
   return result;
 };
 
+const deleteBookFromDB = async (id: string): Promise<IBook | null> => {
+  const result = await Book.findByIdAndDelete(id);
+  return result;
+};
+
 export const BookServices = {
   createBookToDB,
-  getSingleBookFromDB
+  getSingleBookFromDB,
+  deleteBookFromDB,
 };
