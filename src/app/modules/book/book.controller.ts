@@ -9,8 +9,7 @@ import pick from "../../../shared/pick";
 
 const createBook = catchAsync(async (req: Request, res: Response) => {
   const { ...bookData } = req.body;
-//   console.log({ bookData });
-//   return false;
+  bookData.authro_id = req.user?._id
   const result = await BookServices.createBookToDB(bookData);
 
   sendResponse<IBook>(res, {
@@ -51,8 +50,9 @@ const getSingleBook = catchAsync(async (req: Request, res: Response) => {
 const updateBook = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
   const updateData = req.body;
+  const userId = req.user?._id;
 
-  const result = await BookServices.updateBookToDB(id, updateData);
+  const result = await BookServices.updateBookToDB(id, updateData, userId);
 
   sendResponse<IBook>(res, {
     statusCode: httpStatus.OK,
@@ -64,9 +64,9 @@ const updateBook = catchAsync(async (req: Request, res: Response) => {
 
 const deleteBook = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
-  // const user = req.user;
+  const userId = req.user?._id;
 
-  const result = await BookServices.deleteBookFromDB(id);
+  const result = await BookServices.deleteBookFromDB(id, userId);
 
   sendResponse<IBook>(res, {
     statusCode: httpStatus.OK,

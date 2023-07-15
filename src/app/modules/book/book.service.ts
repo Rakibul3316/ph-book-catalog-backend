@@ -1,3 +1,5 @@
+import httpStatus from "http-status";
+import ApiError from "../../../errors/ApiError";
 import { IGenericResponse } from "../../../interfaces/common";
 import { bookSearchFields } from "./book.contant";
 import { IBook, IBookFilters } from "./book.interface";
@@ -59,16 +61,34 @@ const getSingleBookFromDB = async (id: string): Promise<IBook | null> => {
 
 const updateBookToDB = async (
   id: string,
-  payload: Partial<IBook>
+  payload: Partial<IBook>,
+  userId: string
 ): Promise<IBook | null> => {
-  const result = await Book.findOneAndUpdate({ _id: id }, payload, {
-    new: true,
-  }).populate("author_id");
+  const book = await Book.findOne({ _id: id });
+  let result = null;
+
+  if (book?.author_id.toString() === userId) {
+    result = await Book.findOneAndUpdate({ _id: id }, payload, {
+      new: true,
+    }).populate("author_id");
+  } else {
+    throw new ApiError(httpStatus.UNAUTHORIZED, "You can't update this book");
+  }
   return result;
 };
 
-const deleteBookFromDB = async (id: string): Promise<IBook | null> => {
-  const result = await Book.findByIdAndDelete(id);
+const deleteBookFromDB = async (
+  id: string,
+  userId: string
+): Promise<IBook | null> => {
+  const book = await Book.findOne({ _id: id });
+  let result = null;
+
+  if (book?.author_id.toString() === userId) {
+    result = await Book.findByIdAndDelete(id);
+  } else {
+    throw new ApiError(httpStatus.UNAUTHORIZED, "You can't delete this book");
+  }
   return result;
 };
 
